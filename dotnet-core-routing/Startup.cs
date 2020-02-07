@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using dotnet_core_routing.IServices;
+using dotnet_core_routing.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +21,8 @@ namespace dotnet_core_routing
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ICustomerRepository, FakeCustomerRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,16 +37,28 @@ namespace dotnet_core_routing
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapVersion("/version");
+                endpoints.Map("/version", endpoints.CreateApplicationBuilder()
+                    .UseMiddleware<VersionMiddleware>()
+                    .Build())
+                    .WithDisplayName("Version number");
 
-                endpoints.MapGet("/", async context =>
+                // endpoints.MapVersion("/version");
+
+              
+
+                endpoints.MapGet("/customers/{id:int}", async context =>
                 {
-                    var customer = new { firstname = "Marcin", lastname = "Sulecki" };
-
+                    int id = Convert.ToInt32(context.Request.RouteValues["id"]);
+                   
+                    ICustomerRepository customerRepository = context.RequestServices.GetRequiredService<ICustomerRepository>();
+                    var customer = customerRepository.Get(id);
+                  
                     context.Response.Headers.Add("Content-Type", "application/json");
                     await JsonSerializer.SerializeAsync(context.Response.Body, customer);
                     // await context.Response.WriteAsync("Hello World!");
                 });
+
+             
 
                 endpoints.MapPost("A", async context =>
                 {
@@ -66,7 +82,7 @@ namespace dotnet_core_routing
                     }
                 });
 
-
+             
                 
 
 

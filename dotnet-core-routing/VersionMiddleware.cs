@@ -24,8 +24,6 @@ namespace dotnet_core_routing
         {
             context.Response.StatusCode = 200;
             await context.Response.WriteAsync(_version);
-
-            //we're all done, so don't invoke next middleware
         }
     }
 }
