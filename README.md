@@ -61,6 +61,7 @@ Następnie tworzymy metodę rozszerzającą:
    }
 ~~~
 
+Dzięki temu możemy użyć metody *MapMyDashboard()*
 
 ~~~ csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
