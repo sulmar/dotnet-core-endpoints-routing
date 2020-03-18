@@ -37,6 +37,7 @@ Na początek utwórzmy warstwę pośrednią
     }
 ~~~
 
+### Użycie
 Teraz możemy podpiąć w klasie Startup z użyciem endpoints:
 
 ~~~ csharp
@@ -116,6 +117,8 @@ public class MyDashboardOptions
 } 
 ~~~
 
+### Warstwa pośrednia (middleware)
+
 Przekazujemy ją poprzez konstruktor
 
 ~~~ csharp
@@ -142,7 +145,9 @@ public class MyDashboardMiddleware
     }
 ~~~
 
-### Metoda rozszerzająca z akcją do obsługi opcji
+### Metoda rozszerzająca
+
+Dodajemy parametr Action<T> gdzie T to nasza klasa z opcjami:
 
 ~~~ csharp
 public static class MyEndpointRouteBuilderExtensions
@@ -170,7 +175,7 @@ public static class MyEndpointRouteBuilderExtensions
         }
 ~~~
 
-### Zastosowanie
+### Użycie
 
 ~~~ csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -260,7 +265,7 @@ public interface IContentService
     }
 ~~~
 
-### Zastosowanie
+### Użycie
 
 ~~~ csharp
 public void ConfigureServices(IServiceCollection services)
