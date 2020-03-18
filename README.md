@@ -192,6 +192,8 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ## Wstrzykiwanie zależności (Dependency Injections)
 
+### Utworzenie usługi
+
 ~~~ csharp
 public interface IContentService
  {
@@ -216,6 +218,8 @@ public interface IContentService
         }
     }
  ~~~
+ 
+ ### Utworzenie warstwy pośredniej (middleware)
  
  ~~~ csharp
   public class MyDashboardMiddleware
@@ -242,6 +246,31 @@ public interface IContentService
     }
   ~~~
   
+  ### Utworzenie metody rozszerzającej
+  
+  ~~~ csharp
+  public static class MyServiceCollectionExtensions
+    {
+        public static IServiceCollection AddMyContentService([NotNull] this IServiceCollection services)
+        {
+            services.AddTransient<IContentService, MyContentService>();
+
+            return services;
+        }
+    }
+~~~
+
+### Zastosowanie
+
+~~~ csharp
+public void ConfigureServices(IServiceCollection services)
+ {
+     services.AddMyContentService();
+ }
+~~~
+
+## Podsumowanie
+
   
  
 
