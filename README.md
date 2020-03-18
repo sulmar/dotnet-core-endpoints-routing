@@ -61,3 +61,17 @@ Następnie tworzymy metodę rozszerzającą:
    }
 ~~~
 
+
+~~~ csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    app.UseRouting();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.Map("/", async context => await context.Response.WriteAsync("Hello World!"));
+
+        endpoints.MapMyDashboard("/mydashboard");
+     }
+ }
+~~~
