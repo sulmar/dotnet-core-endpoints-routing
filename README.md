@@ -139,6 +139,31 @@ public class MyDashboardMiddleware
     }
 ~~~
 
+~~~ csharp
+public static class MyEndpointRouteBuilderExtensions
+    {
+        public static IEndpointConventionBuilder MapMyDashboard(
+         this IEndpointRouteBuilder endpoints,
+         string pattern = "/dashboard",
+         Action<MyDashboardOptions> configureOptions = null
+         )
+        {
+            var app = endpoints.CreateApplicationBuilder();
+
+            var options = new MyDashboardOptions();
+            configureOptions?.Invoke(options);
+
+            var pipeline = app
+                 .UsePathBase(pattern)
+                 .UseMiddleware<MyDashboardMiddleware>(options)
+                 .Build();
+
+            // Glob patterns
+            // https://docs.microsoft.com/pl-pl/aspnet/core/fundamentals/file-providers?view=aspnetcore-3.1
+            return endpoints.Map(pattern + "/{**path}", pipeline);
+
+        }
+~~~
 
 
 ## Wstrzykiwanie zależności (Dependency Injections)
