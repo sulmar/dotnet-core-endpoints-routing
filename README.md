@@ -37,6 +37,8 @@ Na początek utwórzmy warstwę pośrednią
     }
 ~~~
 
+Następnie tworzymy metodę rozszerzającą:
+
 ~~~ csharp
  public static class MyEndpointRouteBuilderExtensions
  {
