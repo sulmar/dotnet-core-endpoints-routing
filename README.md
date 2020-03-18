@@ -106,7 +106,8 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 ## Konfiguracja
 W jaki sposób przekazać opcje na wzór MapHub?
 
-### Utwórz opcje
+### Opcje
+Tworzymy klasę opcji:
 
 ~~~ csharp
 public class MyDashboardOptions
@@ -114,6 +115,8 @@ public class MyDashboardOptions
      public string DashboardTitle { get; set; }
 } 
 ~~~
+
+Przekazujemy ją poprzez konstruktor
 
 ~~~ csharp
 public class MyDashboardMiddleware
@@ -139,6 +142,8 @@ public class MyDashboardMiddleware
     }
 ~~~
 
+### Metoda rozszerzająca z akcją do obsługi opcji
+
 ~~~ csharp
 public static class MyEndpointRouteBuilderExtensions
     {
@@ -163,6 +168,12 @@ public static class MyEndpointRouteBuilderExtensions
             return endpoints.Map(pattern + "/{**path}", pipeline);
 
         }
+~~~
+
+### Zastosowanie
+
+~~~ csharp
+  endpoints.MapMyDashboard("/mydashboard", options => options.DashboardTitle = "My dashboard");
 ~~~
 
 
