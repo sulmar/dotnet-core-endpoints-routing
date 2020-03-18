@@ -37,7 +37,7 @@ Na początek utwórzmy warstwę pośrednią
     }
 ~~~
 
-
+Teraz możemy podpiąć w klasie Startup z użyciem endpoints:
 
 ~~~ csharp
  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -54,14 +54,15 @@ Na początek utwórzmy warstwę pośrednią
          endpoints.Map("/", async context => await context.Response.WriteAsync("Hello World!"));
 
          endpoints.Map("/mydashboard", endpoints.CreateApplicationBuilder()
-             .UseMiddleware<VersionMiddleware>()
+             .UseMiddleware<MyDashboardMiddleware>()
              .Build());
             }
   ~~~
                
 
+### Utworzenie metody rozszerzającej 
 
-Następnie tworzymy metodę rozszerzającą:
+W celu ułatwienia korzystania z naszej warstwy utworzymy metodę rozszerzającą *MapMyDashboard()*
 
 ~~~ csharp
  public static class MyEndpointRouteBuilderExtensions
@@ -85,7 +86,7 @@ Następnie tworzymy metodę rozszerzającą:
    }
 ~~~
 
-Dzięki temu możemy użyć metody *MapMyDashboard()*
+Zastosowanie metody *MapMyDashboard()*
 
 ~~~ csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
