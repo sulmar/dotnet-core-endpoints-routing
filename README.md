@@ -192,3 +192,56 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ## Wstrzykiwanie zależności (Dependency Injections)
 
+~~~ csharp
+public interface IContentService
+ {
+     string Get();
+ }
+ 
+  public class MyContentService : IContentService
+    {
+        public string Get()
+        {
+            return "Hello Dashboard!";
+        }
+    }
+
+    public static class MyServiceCollectionExtensions
+    {
+        public static IServiceCollection AddMyContentService([NotNull] this IServiceCollection services)
+        {
+            services.AddTransient<IContentService, MyContentService>();
+
+            return services;
+        }
+    }
+ ~~~
+ 
+ ~~~ csharp
+  public class MyDashboardMiddleware
+    {
+        private readonly RequestDelegate next;
+        private readonly MyDashboardOptions options;
+        private readonly IContentService contentService;
+
+        public MyDashboardMiddleware(RequestDelegate next, MyDashboardOptions options, IContentService contentService)
+        {
+            this.next = next;
+            this.options = options;
+            this.contentService = contentService;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            string content = contentService.Get();
+
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync($@"<html><head><title>{options.DashboardTitle}</title><head><body>{content}</body></html>");
+        }
+    }
+  ~~~
+  
+  
+ 
+
