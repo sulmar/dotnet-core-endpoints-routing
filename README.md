@@ -11,6 +11,29 @@ To powodowało, że każdy framework był mapowany nieco w inny sposób.
 
 Dzięki **endpoints** zostało to zunifikowane i teraz każdy programista może skorzystać z tego mechanizmu podczas tworzenia własnej warstwy pośredniej (middleware).
 
+## Warstwa pośrednia (middleware)
 
+Na początek utwórzmy warstwę pośrednią
 
+~~~ csharp
+ public class MyDashboardMiddleware
+    {
+        private readonly RequestDelegate next;
+  
+        public MyDashboardMiddleware(RequestDelegate next)
+        {
+            this.next = next;     
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            string title = "My dashboard";
+            string content = "Hello World!";
+
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync($@"<html><head><title>{title}</title><head><body>{content}</body></html>");
+        }
+    }
+~~~
 
