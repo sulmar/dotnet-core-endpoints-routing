@@ -2,14 +2,55 @@
 
 ## Wprowadzenie
 W .NET Core 2.2 wprowadzony został mechanizm *endpoints* a w .NET Core 3 stał się zalecanym sposobem mapowania żądań.
-Korzystają z niego technologie chociażby MVC i SignalR. W jaki sposób zastosować we własnym rozwiązaniu?
-Ale zanim przedstawię rozwiązanie warto wyjaśnić dlaczego je wprowadzono.
+Korzystają z niego chociażby technologie MVC i SignalR. 
+
+Czyli obecnie zamiast:
+
+~~~ csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+  app.UseMvc();
+}
+~~~
+
+Piszemy:
+
+~~~ csharp
+app.UseEndpoints(endpoints =>
+ {
+     endpoints.MapControllerRoute(
+         name: "default",
+         pattern: "{controller=Home}/{action=Index}/{id?}");
+ });
+ ~~~ 
+
+Dlaczego to zostało zmienione?
 
 Otóż wcześniej każdy middleware miał własny sposób mapowania ścieżek, na przykład *UseMvc()*, *UseSignalR()*
-
-To powodowało, że każdy framework był mapowany nieco w inny sposób. 
+To powodowało, że każdy framework był konfigurowany w nieco w inny sposób. 
 
 Dzięki **endpoints** zostało to zunifikowane i teraz każdy programista może skorzystać z tego mechanizmu podczas tworzenia własnej warstwy pośredniej (middleware).
+
+ 
+W takim razie w jaki sposób zastosować to we własnym rozwiązaniu? 
+
+## Wymaganie
+
+Chcemy utworzyć własny dasboard, który będzie podpinany pod url */mydashoard*
+
+~~~ csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    app.UseRouting();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapMyDashboard("/mydashboard");
+     }
+ }
+~~~
+
+
 
 ## Warstwa pośrednia (middleware)
 
