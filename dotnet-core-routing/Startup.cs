@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -23,6 +24,8 @@ namespace dotnet_core_routing
         {
             services.AddTransient<ICustomerRepository, FakeCustomerRepository>();
 
+            services.AddMyContentService();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +40,8 @@ namespace dotnet_core_routing
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMyDashboard("/mydashboard", options => options.DashboardTitle = "My dashboard");
+
                 endpoints.Map("/version", endpoints.CreateApplicationBuilder()
                     .UseMiddleware<VersionMiddleware>()
                     .Build())
@@ -44,7 +49,7 @@ namespace dotnet_core_routing
 
                 // endpoints.MapVersion("/version");
 
-              
+                endpoints.Map("/", async context => await context.Response.WriteAsync("Hello"));
 
                 endpoints.MapGet("/customers/{id:int}", async context =>
                 {
@@ -81,13 +86,111 @@ namespace dotnet_core_routing
                         await context.Response.WriteAsync(json);
                     }
                 });
-
-             
-                
-
-
-
             });
+        }
+    }
+
+    public static class MyEndpointRouteBuilderExtensions
+    {
+        public static IEndpointConventionBuilder MapMyDashboard(
+         this IEndpointRouteBuilder endpoints,
+         string pattern = "/dashboard",
+         Action<MyDashboardOptions> configureOptions = null
+         )
+        {
+            var app = endpoints.CreateApplicationBuilder();
+
+            IContentService contentService = endpoints.ServiceProvider.GetService<IContentService>();
+
+            if (contentService == null)
+            {
+                throw new InvalidOperationException("Unable to find the required services. Please add all the required services by calling " +
+                                                   "'IServiceCollection.AddMyContentService' inside the call to 'ConfigureServices(...)' in the application startup code.");
+            }
+
+
+            // hint: gathering options
+            var options = new MyDashboardOptions();
+            configureOptions?.Invoke(options);
+
+            var pipeline = app
+                 .UsePathBase(pattern)
+                 .UseMiddleware<MyDashboardMiddleware>(options)
+                 .Build();
+
+            return endpoints.Map(pattern + "/{**path}", pipeline);
+
+        }
+
+        public static IEndpointConventionBuilder MapMyDashboard(
+          this IEndpointRouteBuilder endpoints,
+          string pattern = "/dashboard",
+          MyDashboardOptions configureOptions = null
+          )
+        {
+            var app = endpoints.CreateApplicationBuilder();
+
+            var services = app.ApplicationServices;
+
+            configureOptions = configureOptions ?? services.GetService<MyDashboardOptions>() ?? new MyDashboardOptions();
+
+            var pipeline = app
+                 .UsePathBase(pattern)
+                 .UseMiddleware<MyDashboardMiddleware>(configureOptions)
+                 .Build();
+
+            return endpoints.Map(pattern + "/{**path}", pipeline); ;
+        }
+    }
+
+    public class MyDashboardOptions
+    {
+        public string DashboardTitle { get; set; }
+    }
+
+    public interface IContentService
+    {
+        string Get();
+    }
+
+    public class MyContentService : IContentService
+    {
+        public string Get()
+        {
+            return "Hello Dashboard!";
+        }
+    }
+
+    public static class MyServiceCollectionExtensions
+    {
+        public static IServiceCollection AddMyContentService([NotNull] this IServiceCollection services)
+        {
+            services.AddTransient<IContentService, MyContentService>();
+
+            return services;
+        }
+    }
+
+    public class MyDashboardMiddleware
+    {
+        private readonly RequestDelegate next;
+        private readonly MyDashboardOptions options;
+        private readonly IContentService contentService;
+
+        public MyDashboardMiddleware(RequestDelegate next, MyDashboardOptions options, IContentService contentService)
+        {
+            this.next = next;
+            this.options = options;
+            this.contentService = contentService;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            string content = contentService.Get();
+
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync($@"<html><head><title>{options.DashboardTitle}</title><head><body>{content}</body></html>");
         }
     }
 
