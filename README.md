@@ -37,6 +37,30 @@ Na początek utwórzmy warstwę pośrednią
     }
 ~~~
 
+
+
+~~~ csharp
+ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+ {
+     if (env.IsDevelopment())
+     {
+         app.UseDeveloperExceptionPage();
+     }
+
+     app.UseRouting();
+
+     app.UseEndpoints(endpoints =>
+     {
+         endpoints.Map("/", async context => await context.Response.WriteAsync("Hello World!"));
+
+         endpoints.Map("/mydashboard", endpoints.CreateApplicationBuilder()
+             .UseMiddleware<VersionMiddleware>()
+             .Build());
+            }
+  ~~~
+               
+
+
 Następnie tworzymy metodę rozszerzającą:
 
 ~~~ csharp
