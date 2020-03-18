@@ -173,7 +173,20 @@ public static class MyEndpointRouteBuilderExtensions
 ### Zastosowanie
 
 ~~~ csharp
-  endpoints.MapMyDashboard("/mydashboard", options => options.DashboardTitle = "My dashboard");
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+
+    app.UseRouting();
+
+    app.UseEndpoints(endpoints =>
+    {
+      endpoints.MapMyDashboard("/mydashboard", options => options.DashboardTitle = "My dashboard");
+    }
+}
 ~~~
 
 
