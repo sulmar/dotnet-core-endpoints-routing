@@ -5,7 +5,7 @@ W .NET Core 2.2 wprowadzony został mechanizm *endpoints* a w .NET Core 3 stał 
 Korzystają z niego technologie chociażby MVC i SignalR. W jaki sposób zastosować we własnym rozwiązaniu?
 Ale zanim przedstawię rozwiązanie warto wyjaśnić dlaczego je wprowadzono.
 
-Otóż wcześniej każdy middleware miał własny sposób mapowania ścieżek, na przykład **UseMvc()**, **UseSignalR()**
+Otóż wcześniej każdy middleware miał własny sposób mapowania ścieżek, na przykład *UseMvc()*, *UseSignalR()*
 
 To powodowało, że każdy framework był mapowany nieco w inny sposób. 
 
