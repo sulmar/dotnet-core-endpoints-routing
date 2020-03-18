@@ -37,3 +37,25 @@ Na początek utwórzmy warstwę pośrednią
     }
 ~~~
 
+~~~ csharp
+ public static class MyEndpointRouteBuilderExtensions
+ {
+     public static IEndpointConventionBuilder MapMyDashboard(
+      this IEndpointRouteBuilder endpoints,
+      string pattern = "/dashboard")
+     {
+         var app = endpoints.CreateApplicationBuilder();
+
+         var pipeline = app
+              .UsePathBase(pattern)
+              .UseMiddleware<MyDashboardMiddleware>()
+              .Build();
+
+         // Glob patterns
+         // https://docs.microsoft.com/pl-pl/aspnet/core/fundamentals/file-providers?view=aspnetcore-3.1
+         return endpoints.Map(pattern + "/{**path}", pipeline);
+
+     }
+   }
+~~~
+
