@@ -101,3 +101,45 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
      }
  }
 ~~~
+
+
+## Konfiguracja
+W jaki sposób przekazać opcje na wzór MapHub?
+
+### Utwórz opcje
+
+~~~ csharp
+public class MyDashboardOptions
+{
+     public string DashboardTitle { get; set; }
+} 
+~~~
+
+~~~ csharp
+public class MyDashboardMiddleware
+    {
+        private readonly RequestDelegate next;
+        private readonly MyDashboardOptions options;
+
+        public MyDashboardMiddleware(RequestDelegate next, MyDashboardOptions options)
+        {
+            this.next = next;
+            this.options = options;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            string title = options.DashboardTitle;
+            string content = "Hello World!";
+            
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync($@"<html><head><title>{title}</title><head><body>{content}</body></html>");
+        }
+    }
+~~~
+
+
+
+## Wstrzykiwanie zależności (Dependency Injections)
+
