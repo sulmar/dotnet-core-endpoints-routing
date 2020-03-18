@@ -16,12 +16,15 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 Piszemy:
 
 ~~~ csharp
-app.UseEndpoints(endpoints =>
- {
-     endpoints.MapControllerRoute(
-         name: "default",
-         pattern: "{controller=Home}/{action=Index}/{id?}");
- });
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+  app.UseEndpoints(endpoints =>
+   {
+       endpoints.MapControllerRoute(
+           name: "default",
+           pattern: "{controller=Home}/{action=Index}/{id?}");
+   });
+ }
  ~~~ 
 
 Dlaczego to zostało zmienione?
