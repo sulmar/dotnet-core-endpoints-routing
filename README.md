@@ -320,6 +320,8 @@ public void ConfigureServices(IServiceCollection services)
 
 ## Podsumowanie
 Przedstawiony kod można potraktować jako szablon do tworzenia własnych rozwiązań.
+
+
 Powstał w oparciu o analizę kodu źródłowego Signal-R 
 https://github.com/dotnet/aspnetcore/tree/master/src/SignalR/server/SignalR/src
 a w szczególności klasy 
